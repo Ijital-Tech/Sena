@@ -7,8 +7,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Generate config
+          command: |
+            chmod 555 ./.circleci/generate-config.sh
+            ./.circleci/generate-config.sh | tee generated_config.yml
+      - continuation/continue:
+          configuration_path: generated_config.yml # use newly generated config to continue
 workflows:
   say-hello-workflow: 
     jobs:
