@@ -1,117 +1,30 @@
 yuana: &yuana
   post-steps:
-    - slack/notify:
-        event: fail
-        custom: |
-          {
-          "blocks": [
-            {
-            "type": "header",
-            "text": {
-              "type": "plain_text",
-              "text": "Build failure for $CIRCLE_PROJECT_REPONAME :x:",
-              "emoji": true
-            }
-            },
-            {
-            "type": "section",
-            "fields": [
-              {
-              "type": "plain_text",
-              "text": "Branch name: $CIRCLE_BRANCH",
-              "emoji": true
-              },
-              {
-              "type": "plain_text",
-              "text": "Build number: $CIRCLE_BUILD_NUM",
-              "emoji": true
-              },
-              {
-              "type": "plain_text",
-              "text": "Job name: $CIRCLE_JOB",
-              "emoji": true
-              },
-              {
-              "type": "plain_text",
-              "text": "Triggered by: $CIRCLE_USERNAME",
-              "emoji": true
-              }
-            ]
-            },
-            {
-            "type": "actions",
-            "elements": [
-              {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "Take me there",
-                "emoji": true
-              },
-              "value": "link_to_job",
-              "url": "$CIRCLE_BUILD_URL",
-              "action_id": "button-action"
-              }
-            ]
-            }
-          ]
-          }
-        channel: $BUILD_NOTIFICATION_CHANNEL
- 
-    - slack/notify:
-        event: pass
-        custom: |
-          {
-          "blocks": [
-            {
-            "type": "header",
-            "text": {
-              "type": "plain_text",
-              "text": "Build success for $CIRCLE_PROJECT_REPONAME :white_check_mark:",
-              "emoji": true
-            }
-            },
-            {
-            "type": "section",
-            "fields": [
-              {
-              "type": "plain_text",
-              "text": "Branch name: $CIRCLE_BRANCH",
-              "emoji": true
-              },
-              {
-              "type": "plain_text",
-              "text": "Build number: $CIRCLE_BUILD_NUM",
-              "emoji": true
-              },
-              {
-              "type": "plain_text",
-              "text": "Job name: $CIRCLE_JOB",
-              "emoji": true
-              },
-              {
-              "type": "plain_text",
-              "text": "Triggered by: $CIRCLE_USERNAME",
-              "emoji": true
-              }
-            ]
-            },
-            {
-            "type": "actions",
-            "elements": [
-              {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "Take me there",
-                "emoji": true
-              },
-              "value": "link_to_job",
-              "url": "$CIRCLE_BUILD_URL",
-              "action_id": "button-action"
-              }
-            ]
-            }
-          ]
-          }
-        channel: $BUILD_NOTIFICATION_CHANNEL
+    - run:
+        name: Publish Success Status to SNS
+        command: |
+          aws sns publish \
+          --topic-arn \$CIRCLE_CI_SNS_TOPIC \
+          --message "Build Success for \$CIRCLE_PROJECT_REPONAME" \
+          --message-attributes '{
+            "BuildNumber":{"DataType":"String", "StringValue":"'\$CIRCLE_BUILD_NUM'"},
+            "Branch":{"DataType":"String", "StringValue":"'\$CIRCLE_BRANCH'"},
+            "CircleCiJob":{"DataType":"String", "StringValue":"'\$CIRCLE_JOB'"},
+            "Author":{"DataType":"String", "StringValue":"'\$CIRCLE_USERNAME'"},
+            "BuildStatus":{"DataType":"String", "StringValue":"Success"}
+          }'
+        when: on_success
+    - run:
+        name: Publish Failure Status to SNS
+        command: |
+          aws sns publish \
+          --topic-arn \$CIRCLE_CI_SNS_TOPIC \
+          --message "Build Failure for \$CIRCLE_PROJECT_REPONAME" \
+          --message-attributes '{
+            "BuildNumber":{"DataType":"String", "StringValue":"'\$CIRCLE_BUILD_NUM'"},
+            "Branch":{"DataType":"String", "StringValue":"'\$CIRCLE_BRANCH'"},
+            "CircleCiJob":{"DataType":"String", "StringValue":"'\$CIRCLE_JOB'"},
+            "Author":{"DataType":"String", "StringValue":"'\$CIRCLE_USERNAME'"},
+            "BuildStatus":{"DataType":"String", "StringValue":"Failure"}
+          }'
+        when: on_fail

@@ -20,5 +20,5 @@ workflows:
   build:
     jobs:
       - build:
-        #   <<: *slack-post-steps
+          <<: *yuana
 EOF
