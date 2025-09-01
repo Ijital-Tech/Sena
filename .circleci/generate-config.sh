@@ -4,10 +4,6 @@ version: '2.1'
 
 `cat ./.circleci/yuana.txt`
 
-orbs:
-  win: circleci/windows@5.0
-  slack: circleci/slack@4.13.1
-
 jobs:
   build:
     docker:
@@ -18,7 +14,7 @@ jobs:
       - run:
           name: Push Docker Image
           command: |
-            echo 'HELLOW WOLR'
+            echo 'HELLOW WOLRD'
 
 workflows:
   build:
