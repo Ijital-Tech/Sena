@@ -9,9 +9,8 @@ jobs:
       - run:
           name: Generate config
           command: |
-            chmod 555 ./.circleci/generate-config.sh
-            ./.circleci/generate-config.sh | tee generated_config.yml
-            echo 'dsdsDdsfsfsfsf'
+            # chmod 555 ./.circleci/generate-config.sh
+            # ./.circleci/generate-config.sh | tee generated_config.yml
 workflows:
   say-hello-workflow: 
     jobs:
