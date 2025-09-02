@@ -9,6 +9,7 @@ jobs:
       - run:
           name: Generate config
           command: |
+            echo 'hellow worl'
             # chmod 555 ./.circleci/generate-config.sh
             # ./.circleci/generate-config.sh | tee generated_config.yml
 workflows:
