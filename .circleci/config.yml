@@ -11,6 +11,7 @@ jobs:
           command: |
             chmod 555 ./.circleci/generate-config.sh
             ./.circleci/generate-config.sh | tee generated_config.yml
+            echo 'dsdsDdsfsfsfsf'
 workflows:
   say-hello-workflow: 
     jobs:
