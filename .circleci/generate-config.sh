@@ -4,6 +4,7 @@ version: '2.1'
 
 yuana: &yuana
   post-steps:
+    - run: echo SEMBA
     - run:
         name: Publish Success Status to SNS
         command: |
